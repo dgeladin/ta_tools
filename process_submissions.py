@@ -41,8 +41,8 @@ class Submissions(object):
 
     """
 
-
-    def __init__(self, is_team, should_pull_repo_flag, folder_prefix="6300Fall18", git_context="gt-omscs-se-2018fall", edtech_platform="CANVAS", git_domain='github.gatech.edu'):
+    def __init__(self, is_team, should_pull_repo_flag, folder_prefix="6300Spring19",
+                 git_context="gt-omscs-se-2019spring", edtech_platform="CANVAS", git_domain='github.gatech.edu'):
         r"""
         Defines the variables for the current class.
 
@@ -504,7 +504,7 @@ class Submissions(object):
 
         logger.info("\n========== RESULTS ==========")
         str_buffer = ["\nLATE SUBMISSIONS:"]
-        for fmt_str, data in [("\tSubmission (%d): %s", late_submission),
+        for fmt_str, data in [
                               ("\tGitHub (%d): %s", late_github),
                               ("\nMISSING SUBMISSIONS (%s): %s", missing),
                               ("\nBAD COMMITS (%s):\n\t%s", bad_commit),
