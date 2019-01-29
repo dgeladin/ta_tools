@@ -24,8 +24,8 @@ Do not forget about datetime's isoformat to get this result!
 
 
 __all__ = ["get_assignment_info", "process_assignment", ]
-__author__ = "David Tran, Travis Janssen"
-__credits__ = ["David Tran", "Travis Janssen"]
+__author__ = "Travis Janssen, David Tran"
+__credits__ = ["Travis Janssen", "David Tran"]
 __status__ = "Production"
 __version__ = "1.0.0"
 
@@ -68,8 +68,11 @@ def process_assignment(
                               should_pull_repo_flag=should_pull_repo_flag)
 
     # Optionally create JSON files, otherwise skip. Access this with -j input argument.
-    submissions.create_student_json('students_full.txt', should_create_json_files)
-    submissions.create_team_json('teams_full.txt', is_team and should_create_json_files)  # don't try to create team JSONs at the beginning; teams are not normally available at semester start
+    if should_create_json_files:
+        submissions.create_student_json('students_full.txt')
+
+    if should_create_json_files and is_team:
+        submissions.create_team_json('teams_full.txt')  # don't try to create team JSONs at the beginning; teams are not normally available at semester start
 
     submissions.process_repos(
       submission_folder_name=('./submissions/%s' % assignment_name),
@@ -173,66 +176,66 @@ def get_assignment_info(assignment_name, should_pull_repo_flag=None,
 
 
     # Deadline info is EST + 4 hours = UTC, which is the T-Square deadline
-    # TODO: check date for DST, which effects deadlines
+    # Anywhere on Earth time is UTC-12. Worst case: UTC+12 (like Wake Island) --> midnight AoE = +2 days at midnight, so 1/26/2018 midnight = 1/28/2018 midnight
     assignment_dict = {
       'A1': {
-        'deadline' : '2018-01-13T12:00:00',
+        'deadline' : '2018-08-28 03:59:00',
         'assignment_name' : 'A1',
         },
       'A2': {
-        'deadline' : '2018-01-20T12:00:00',
+        'deadline' : '2018-09-02 00:00:00',
         'assignment_name' : 'A2',
         },
       'A3': {
-        'deadline' : '2018-01-27T12:00:00',
+        'deadline' : '2018-09-09 00:00:00',
         'assignment_name' : 'A3',
         },
       'A4': {
-        'deadline' : '2018-02-03T12:00:00',
+        'deadline' : '2018-09-16 00:00:00',
         'assignment_name' : 'A4',
         },
       'A5': {
-        'deadline' : '2018-02-10T12:00:00',
+        'deadline' : '2018-09-23 00:00:00',
         'assignment_name' : 'A5',
         },
       'A6': {
-        'deadline' : '2018-03-17T12:00:00',
+        'deadline' : '2018-10-28 00:00:00',
         'assignment_name' : 'A6',
         },
       'A7': {
-        'deadline' : '2018-03-31T12:00:00',
+        'deadline' : '2018-11-04 00:00:00',
         'assignment_name' : 'A7',
         },
       'I1': {
-        'deadline' : '2018-04-07T12:00:00',
+        'deadline' : '2018-11-11 00:00:00',
         'assignment_name' : 'I_D1',
         },
       'I2': {
-        'deadline' : '2018-04-14T12:00:00',
+        'deadline' : '2018-11-18 00:00:00',
         'assignment_name' : 'I_D2',
         },
       'I3': {
-        'deadline' : '2018-04-21T12:00:00',
+        'deadline' : '2018-12-02 00:00:00',  # note: summer doesn't use I3
         'assignment_name' : 'I_D3',
         },
       'T0': {
-        'deadline' : '2018-02-10T12:00:00',
+        'deadline' : '2018-10-23 00:00:00',
         'assignment_name' : 'T_D0',
         },
       'T1': {
-        'deadline' : '2018-02-17T12:00:00',
+        'deadline' : '2018-10-30 00:00:00',
         'assignment_name' : 'T_D1',
         },
       'T2': {
-        'deadline' : '2018-02-24T12:00:00',
+        'deadline' : '2018-10-07 00:00:00',
         'assignment_name' : 'T_D2',
         },
       'T3': {
-        'deadline' : '2018-03-03T12:00:00',
+        'deadline' : '2018-10-14 00:00:00',
         'assignment_name' : 'T_D3',
         },
       'T4': {
-        'deadline' : '2018-03-10T12:00:00',
+        'deadline' : '2018-10-19 00:00:00',
         'assignment_name' : 'T_D4',
         },
       }
@@ -316,7 +319,7 @@ def parse_main(submission_target=None):
 
     # States if we will always pull from the Repo
     # None is auto, True is always, False is never
-    force_pull_flag = None
+    pull_from_github = None
     create_json_files = None
 
 
@@ -355,11 +358,11 @@ def parse_main(submission_target=None):
           )
 
         parser.add_argument(
-          '-f', '--force', #action='store_true',
+          '-p', '--pull', #action='store_true',
             choices=['True', 'False'],
           default=None,
          # type=bool,
-          dest='force_pull_flag',
+          dest='pull_from_github',
           help="overrides the default settings and always pull the repo",
           )
 
@@ -383,15 +386,15 @@ def parse_main(submission_target=None):
             assignment_name = assignment_name[0]
 
         # Sanitize inputs
-        force_pull_flag = args.force_pull_flag
+        pull_from_github = args.pull_from_github
 
         # is_team = True if assignment_name.startswith('T') else False
-        if force_pull_flag == "False":
-            force_pull_flag = False
-        elif force_pull_flag == 'True':
-            force_pull_flag = True
+        if pull_from_github == "False":
+            pull_from_github = False
+        elif pull_from_github == 'True':
+            pull_from_github = True
         else:
-            force_pull_flag = None
+            pull_from_github = None
 
         create_json_files = args.create_json_files
 
@@ -413,7 +416,7 @@ def parse_main(submission_target=None):
 
         assignment_info = get_assignment_info(
           assignment_name=assignment_name,
-          should_pull_repo_flag=force_pull_flag
+          should_pull_repo_flag=pull_from_github
           )
 
         if not assignment_info:
@@ -442,7 +445,7 @@ def parse_main(submission_target=None):
 
             assignment_info = get_assignment_info(
               assignment_name=assignment_code,
-              should_pull_repo_flag=force_pull_flag,
+              should_pull_repo_flag=pull_from_github,
               is_batch_run=True)
 
             if assignment_info:
