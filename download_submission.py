@@ -179,23 +179,23 @@ def get_assignment_info(assignment_name, should_pull_repo_flag=None,
     # Anywhere on Earth time is UTC-12. Worst case: UTC+12 (like Wake Island) --> midnight AoE = +2 days at midnight, so 1/26/2018 midnight = 1/28/2018 midnight
     assignment_dict = {
       'A1': {
-        'deadline' : '2019-01-16 03:59:00',
+        'deadline' : '2019-01-13 03:59:00',
         'assignment_name' : 'A1',
         },
       'A2': {
-        'deadline' : '2019-01-13 00:05:00',
+        'deadline' : '2019-01-20 00:05:00',
         'assignment_name' : 'A2',
         },
       'A3': {
-        'deadline' : '2019-01-20 00:05:00',
+        'deadline' : '2019-01-27 00:05:00',
         'assignment_name' : 'A3',
         },
       'A4': {
-        'deadline' : '2019-01-27 00:05:00',
+        'deadline' : '2019-02-03 00:05:00',
         'assignment_name' : 'A4',
         },
       'A5': {
-        'deadline' : '2019-02-03 00:05:00',
+        'deadline' : '2019-03-17 00:05:00',
         'assignment_name' : 'A5',
         },
       'A6': {
@@ -203,7 +203,7 @@ def get_assignment_info(assignment_name, should_pull_repo_flag=None,
         'assignment_name' : 'A6',
         },
       'A7': {
-        'deadline' : '2019-04-07 00:05:00',
+        'deadline' : '2019-03-31 00:05:00',
         'assignment_name' : 'A7',
         },
       'I1': {
